@@ -13,7 +13,7 @@ output "ssm_parameter_name" {
   value       = aws_ssm_parameter.state_bucket.name
 }
 
-output "backend_config_snippet" {
+output "backend_config" {
   description = "Bloque de configuración de backend listo para copiar en otros repositorios"
   value       = <<-EOT
 terraform {

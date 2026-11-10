@@ -36,40 +36,20 @@ jobs:
           TF_VAR_owner: ${{ vars.OWNER }}
           TF_VAR_region: ${{ vars.REGION }}
 
-      - name: Summary & Backend Snippet
+      - name: Summary & SSM Parameter Info
         run: |
           BUCKET=$(terraform output -raw bucket_name)
+          SSM_PARAM=$(terraform output -raw ssm_parameter_name)
           REGION="${{ vars.REGION }}"
-          echo "### 🚀 Bucket de Estado Creado con Éxito" >> $GITHUB_STEP_SUMMARY
-          echo "- **Nombre del Bucket:** \`$BUCKET\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Región:** \`$REGION\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "#### 📋 Configuración de backend para otros repositorios:" >> $GITHUB_STEP_SUMMARY
-          echo '```hcl' >> $GITHUB_STEP_SUMMARY
-          echo 'terraform {' >> $GITHUB_STEP_SUMMARY
-          echo '  backend "s3" {' >> $GITHUB_STEP_SUMMARY
-          echo "    bucket = \"$BUCKET\"" >> $GITHUB_STEP_SUMMARY
-          echo '    key    = "ruta/a/tu/terraform.tfstate"' >> $GITHUB_STEP_SUMMARY
-          echo "    region = \"$REGION\"" >> $GITHUB_STEP_SUMMARY
-          echo '  }' >> $GITHUB_STEP_SUMMARY
-          echo '}' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Summary & Backend Snippet
-        run: |
-          BUCKET=$(terraform output -raw bucket_name)
-          REGION="${{ vars.REGION }}"
-          echo "### 🚀 Bucket de Estado Creado con Éxito" >> $GITHUB_STEP_SUMMARY
-          echo "- **Nombre del Bucket:** \`$BUCKET\`" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Sandbox State Bucket Creado con Éxito" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bucket S3:** \`$BUCKET\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Parámetro SSM:** \`$SSM_PARAM\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Región:** \`$REGION\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "#### 📋 Configuración de backend para otros repositorios:" >> $GITHUB_STEP_SUMMARY
-          echo '```hcl' >> $GITHUB_STEP_SUMMARY
-          echo 'terraform {' >> $GITHUB_STEP_SUMMARY
-          echo '  backend "s3" {' >> $GITHUB_STEP_SUMMARY
-          echo "    bucket = \"$BUCKET\"" >> $GITHUB_STEP_SUMMARY
-          echo '    key    = "ruta/a/tu/terraform.tfstate"' >> $GITHUB_STEP_SUMMARY
-          echo "    region = \"$REGION\"" >> $GITHUB_STEP_SUMMARY
-          echo '  }' >> $GITHUB_STEP_SUMMARY
-          echo '}' >> $GITHUB_STEP_SUMMARY
+          echo "#### 🤖 Consumo 100% Automático en otros repositorios (sin copiar y pegar):" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "# En el workflow del otro repositorio antes de terraform init:" >> $GITHUB_STEP_SUMMARY
+          echo "BUCKET=\$(aws ssm get-parameter --name \"$SSM_PARAM\" --query \"Parameter.Value\" --output text)" >> $GITHUB_STEP_SUMMARY
+          echo "terraform init -backend-config=\"bucket=\$BUCKET\" -backend-config=\"key=mi-repo/terraform.tfstate\" -backend-config=\"region=$REGION\"" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
