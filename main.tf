@@ -30,7 +30,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 }
 
 resource "aws_ssm_parameter" "state_bucket" {
-  name  = "/ephemeral-aws-sandbox/tfstate/${aws_s3_bucket.this.id}"
+  name  = "/ephemeral-aws-sandbox/tfstate/bucket_name"
   type  = "String"
   value = aws_s3_bucket.this.bucket
 }
