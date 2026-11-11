@@ -12,6 +12,15 @@ resource "aws_s3_bucket" "this" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
   versioning_configuration {
@@ -30,7 +39,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 }
 
 resource "aws_ssm_parameter" "state_bucket" {
-  name  = "/ephemeral-aws-sandbox/tfstate/bucket_name"
-  type  = "String"
-  value = aws_s3_bucket.this.bucket
+  name        = "/ephemeral-aws-sandbox/tfstate/bucket_name"
+  description = "Nombre del bucket S3 para el backend de estado de Terraform en sandbox efimero"
+  type        = "String"
+  value       = aws_s3_bucket.this.bucket
+
+  tags = {
+    Environment = var.environment
+    Owner       = var.owner
+  }
 }
